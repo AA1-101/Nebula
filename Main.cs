@@ -1,4 +1,5 @@
 ﻿using BepInEx;
+using BepInEx.Logging;
 using BepInEx.Unity.IL2CPP;
 using HarmonyLib;
 using System.Diagnostics.CodeAnalysis;
@@ -19,6 +20,8 @@ namespace Nebula
         public const string PluginVersion = "0.0.1";
         public const string PluginDisplayVersion = "Alpha";
         public const bool IsTestBuild = true;
+        public static ManualLogSource Logger;
+        
         public override void Load()
         {            
             Log.LogInfo("Nebula Loaded!");

@@ -13,7 +13,7 @@ public static class Logger
 {
     private static readonly List<string> _buffer = new();
 
-    private static string? _dataFolder = "";
+    private static string _dataFolder = "";
 
     private static string _logsFolder = "";
 
@@ -38,16 +38,24 @@ public static class Logger
 
         _dataFolder = Path.Combine(root, "Nebula-Data");
         _logsFolder = Path.Combine(_dataFolder, "Logs");
-
+        
         Directory.CreateDirectory(_dataFolder);
         Directory.CreateDirectory(_logsFolder);        
     }
 
     public static void StartSession()
     {
-        if (_initialized)
-            return;
-        
+        if (!_initialized)
+            return;        
+
+        _sessionStart = DateTime.Now;
+
+        string fileName = $"{_sessionStart.ToString("yyyy-MM-dd_HH-mm-ss")}.log";
+        string logPath = Path.Combine(_dataFolder, "Logs");
+
+        _writer = new StreamWriter(_logsFolder);
+
+        _sessionActive = true;
 
         WriteHeader();
     }
@@ -57,13 +65,13 @@ public static class Logger
         _writer.WriteLine("Nebula Session Log");
         _writer.WriteLine("========================================");
 
-        _writer.WriteLine($"Started : {_sessionStart:yyyy-MM-dd HH:mm:ss}");
+        _writer.WriteLine($"Started : {_sessionStart}");
         _writer.WriteLine($"Version : {Main.PluginDisplayVersion} ({Main.PluginVersion})");
         _writer.WriteLine($"Lobby   : {lobbyCode}");        
         _writer.WriteLine("========================================");
         _writer.WriteLine("");
 
-        _writer.WriteLine("Plugin", $"Nebula {Main.PluginDisplayVersion} initialized.");
+        _writer.WriteLine("Plugin", $"Nebula {Main.PluginVersion} initialized.");
         _writer.WriteLine("Environment", $"Unity {Application.unityVersion}");
         _writer.WriteLine("Environment", $"OS: {SystemInfo.operatingSystem}");
         _writer.WriteLine("Session", "Session started.");

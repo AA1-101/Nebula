@@ -1,7 +1,6 @@
 ﻿using HarmonyLib;
-using NebulaMod;
-using NebulaMod.Modules;
 using System.Text;
+using Nebula.Modules;
 using TMPro;
 using UnityEngine;
 
