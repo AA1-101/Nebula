@@ -9,7 +9,7 @@ public enum LogLevel
     Warn,
     Error
 }
-public static class Logger
+public static class NebulaLogger
 {
     private static readonly List<string> _buffer = new();
 
@@ -43,17 +43,20 @@ public static class Logger
         Directory.CreateDirectory(_logsFolder);        
     }
 
-    public static void StartSession()
+    public static void StartLog()
     {
         if (!_initialized)
-            return;        
+            return;
+
+        if (_sessionActive)
+            return;
 
         _sessionStart = DateTime.Now;
 
         string fileName = $"{_sessionStart.ToString("yyyy-MM-dd_HH-mm-ss")}.log";
-        string logPath = Path.Combine(_dataFolder, "Logs");
+        string logPath = Path.Combine(_logsFolder,fileName);
 
-        _writer = new StreamWriter(_logsFolder);
+        _writer = new StreamWriter(logPath);
 
         _sessionActive = true;
 
@@ -75,5 +78,22 @@ public static class Logger
         _writer.WriteLine("Environment", $"Unity {Application.unityVersion}");
         _writer.WriteLine("Environment", $"OS: {SystemInfo.operatingSystem}");
         _writer.WriteLine("Session", "Session started.");
+    }
+    public static void EndLog()
+    {
+        if (!_sessionActive)
+            return;
+
+        _writer.WriteLine("");
+        _writer.WriteLine("========================================");
+        _writer.WriteLine($"Session Close Time: {DateTime.Now}");
+        _writer.WriteLine($"Total Entries: {_entryCount}");
+        _writer.WriteLine("========================================");
+
+        _writer?.Dispose();
+
+        _writer = null;
+        _sessionActive = false;
+        _entryCount = 0;
     }
 }

@@ -1,6 +1,7 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
 using BepInEx.Unity.IL2CPP;
+using Nebula.Modules;
 using HarmonyLib;
 using System.Diagnostics.CodeAnalysis;
 
@@ -23,7 +24,10 @@ namespace Nebula
         public static ManualLogSource Logger;
         
         public override void Load()
-        {            
+        {
+            Logger = Log;
+            NebulaLogger.Init();
+            NebulaLogger.StartLog();
             Log.LogInfo("Nebula Loaded!");
             Harmony harmony = new Harmony(Main.PluginGuid);
             harmony.PatchAll();
