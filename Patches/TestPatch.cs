@@ -8,27 +8,29 @@ internal static class TestPatch
 {
     public static void Postfix()
     {
+        Main.Logger.LogInfo("OnGameJoined called");        
+        Main.Instance.StartCoroutine(DisplayName());
+    }
+
+    public static IEnumerator DisplayName()
+    {
+        while (PlayerControl.LocalPlayer == null)
+            yield return null;
+
         PlayerControl player = PlayerControl.LocalPlayer;
 
-        Main.Logger.LogInfo("OnGameJoined called");
+        while (player.Data == null)
+            yield return null;
 
-        Main.Instance.StartCoroutine(PlayerNullDelay());
-            
         if (!AmongUsClient.Instance.AmHost)
-            return;
+            yield break;
 
         if (Modules.GameStates.GameStarted)
-            return;
+            yield break;
 
         string displayName = TagManager.BuildName(player) + $"<color=#a54aff>{player.Data.PlayerName}</color>";
         Main.Logger.LogInfo("Name Set");
 
-        player.RpcSetName(displayName);                   
-    }
-
-    public static IEnumerator PlayerNullDelay()
-    {
-        while (PlayerControl.LocalPlayer == null)
-        yield return null;
+        player.RpcSetName(displayName);
     }
 }

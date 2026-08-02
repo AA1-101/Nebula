@@ -1,7 +1,6 @@
 ﻿using AmongUs.Data;
 using Discord;
 using HarmonyLib;
-using NebulaMod.Modules;
 
 namespace Nebula.Patches;
 
@@ -30,10 +29,10 @@ public static class DiscordRPC
             {
                 if (!DataManager.Settings.Gameplay.StreamerMode)
                 {
-                    if (GameStates.IsInLobby)
+                    if (Modules.GameStates.IsInLobby)
                     {
                         Lobbycode = GameStartManager.Instance.GameRoomNameCode.text;
-                        Region = Utils.GetRegionName();
+                        Region = Modules.Utils.GetRegionName();
                     }
 
                     if (Lobbycode != "" && Region != "") details = $"EHR - {Lobbycode} ({Region})";
