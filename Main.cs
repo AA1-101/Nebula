@@ -1,9 +1,11 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
 using BepInEx.Unity.IL2CPP;
-using Nebula.Modules;
+using BepInEx.Unity.IL2CPP.Utils.Collections;
 using HarmonyLib;
+using System.Collections;
 using System.Diagnostics.CodeAnalysis;
+using UnityEngine;
 
 namespace Nebula
 {
@@ -21,17 +23,52 @@ namespace Nebula
         public const string PluginVersion = "0.0.1";
         public const string PluginDisplayVersion = "Alpha";
         public const bool IsTestBuild = true;
+
+        public static Main Instance { get; private set; }
+
+        private Coroutines coroutines;
+
         public static ManualLogSource Logger;
         
         public override void Load()
         {
-            Logger = Log;
-            NebulaLogger.Init();
-            NebulaLogger.StartLog();
-            Log.LogInfo("Nebula Loaded!");
+            Instance = this;
+            Logger = Log;           
+            Log.LogInfo("Nebula Loaded!");            
             Harmony harmony = new Harmony(Main.PluginGuid);
+            coroutines = AddComponent<Coroutines>();
             harmony.PatchAll();
-        }       
+            
+        }
+        public Coroutine StartCoroutine(Il2CppSystem.Collections.IEnumerator coroutine)
+        {
+            if (coroutine == null) return null;
+            return coroutines.StartCoroutine(coroutine);
+        }
 
-    }
+        public Coroutine StartCoroutine(IEnumerator coroutine)
+        {
+            if (coroutine == null) return null;
+            return coroutines.StartCoroutine(coroutine.WrapToIl2Cpp());
+        }
+
+        public void StopCoroutine(IEnumerator coroutine)
+        {
+            if (coroutine == null) return;
+            coroutines.StopCoroutine(coroutine.WrapToIl2Cpp());
+        }
+
+        public void StopCoroutine(Coroutine coroutine)
+        {
+            if (coroutine == null) return;
+            coroutines.StopCoroutine(coroutine);
+        }
+        public void StopAllCoroutines()
+        {
+            coroutines.StopAllCoroutines();
+        }
+    }    
+}
+public class Coroutines : MonoBehaviour
+{
 }
