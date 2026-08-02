@@ -1,7 +1,7 @@
 ﻿using AmongUs.Data;
 using Discord;
 using HarmonyLib;
-using Nebula.Modules;
+using NebulaMod.Modules;
 
 namespace Nebula.Patches;
 
@@ -44,7 +44,7 @@ public static class DiscordRPC
                 activity.Details = details;
             }
         }
-        catch 
+        catch (Exception ex)
         {
             Main.Logger.LogInfo("Error in updating discord rpc");            
             details = $"Nebula v{Main.PluginDisplayVersion}";
