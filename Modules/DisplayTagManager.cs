@@ -1,17 +1,11 @@
 ﻿using HarmonyLib;
-using Nebula.Modules;
 using System.Collections;
 
-namespace Nebula.Patches;
+namespace Nebula.Modules;
 
 [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.OnPlayerJoined))]
-internal static class DisplayTagmanager
-{
-    public static void Postfix()
-    {
-        Main.Instance.StartCoroutine(DisplayName());
-    }
-
+public static class DisplayTagManager
+{  
     public static IEnumerator DisplayName()
     {
         while (PlayerControl.LocalPlayer == null)

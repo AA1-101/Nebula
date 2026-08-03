@@ -20,7 +20,7 @@ namespace Nebula.Patches
             if (!AmongUsClient.Instance.AmHost)
                 yield break;
 
-            DisplayTagmanager.RefreshNames();
+            DisplayTagManager.RefreshNames();
         }
     }
 
