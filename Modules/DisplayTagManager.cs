@@ -43,5 +43,5 @@ public static class DisplayTagManager
 
             pc.RpcSetName(TagManager.BuildName(pc));
         }
-    }
+    }   
 }

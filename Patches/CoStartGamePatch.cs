@@ -1,27 +1,17 @@
 ﻿using HarmonyLib;
 using Nebula.Modules;
-using System.Collections;
 
 namespace Nebula.Patches
 {
-    [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.CoStartGame))]
-    public static class CoStartGamePatch
+    [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.CoStartGameHost))]
+    public static class CoStartGameHostPatch
     {
-        public static void Postfix()
+        public static void Prefix()
         {
-            Main.Instance.StartCoroutine(RemoveTags());
-        }
-
-        private static IEnumerator RemoveTags()
-        {
-            while (!GameStates.GameStarted)
-                yield return null;
-
             if (!AmongUsClient.Instance.AmHost)
-                yield break;
+                return;
 
             DisplayTagManager.RefreshNames();
         }
     }
-
 }
