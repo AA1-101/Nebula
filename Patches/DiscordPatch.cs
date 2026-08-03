@@ -5,14 +5,15 @@ using HarmonyLib;
 namespace Nebula.Patches;
 
 // Originally from "Town of Us Rewritten", by Det
+[HarmonyPatch(typeof(ActivityManager), nameof(ActivityManager.UpdateActivity))]
 public static class DiscordRPC
 {
     private static string Lobbycode = "";
     private static string Region = "";
-
-    [HarmonyPatch(typeof(ActivityManager), nameof(ActivityManager.UpdateActivity))]
+    
     public static void Prefix([HarmonyArgument(0)] Activity activity)
     {
+        Main.Logger.LogInfo("DiscordRpcPatch called");
         if (activity == null) return;
 
         var details = $"Nebula v{Main.PluginDisplayVersion}";
