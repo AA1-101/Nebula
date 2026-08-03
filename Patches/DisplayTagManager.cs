@@ -1,9 +1,10 @@
 ﻿using HarmonyLib;
+using Nebula.Modules;
 using System.Collections;
 
 namespace Nebula.Patches;
 
-[HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.OnGameJoined))]
+[HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.OnPlayerJoined))]
 internal static class DisplayTagmanager
 {
     public static void Postfix()
@@ -24,24 +25,29 @@ internal static class DisplayTagmanager
         if (!AmongUsClient.Instance.AmHost)
             yield break;
 
-        if (Modules.GameStates.GameStarted)
+        if (GameStates.GameStarted)
             yield break;
 
-        string displayName = TagManager.BuildName(player);
+        foreach (PlayerControl pc in PlayerControl.AllPlayerControls)
+        {
+            if (pc.Data == null)
+                continue;
 
-        player.RpcSetName(displayName);
+            pc.RpcSetName(TagManager.BuildName(pc));
+        }
     }
 
-    public static void RefreshName()
+    public static void RefreshNames()
     {
         if (!AmongUsClient.Instance.AmHost)
             return;
 
-        var player = PlayerControl.LocalPlayer;
+        foreach (PlayerControl pc in PlayerControl.AllPlayerControls)
+        {
+            if (pc.Data == null)
+                continue;
 
-        if (player?.Data == null)
-            return;
-
-        player.RpcSetName(TagManager.BuildName(player));
+            pc.RpcSetName(TagManager.BuildName(pc));
+        }
     }
 }

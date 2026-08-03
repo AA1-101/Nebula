@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using Nebula.Modules;
 using System.Collections;
 
 namespace Nebula.Patches
@@ -13,16 +14,13 @@ namespace Nebula.Patches
 
         private static IEnumerator RemoveTags()
         {
-            while (PlayerControl.LocalPlayer == null ||
-                   PlayerControl.LocalPlayer.Data == null)
-            {
+            while (!GameStates.GameStarted)
                 yield return null;
-            }
 
             if (!AmongUsClient.Instance.AmHost)
                 yield break;
 
-            DisplayTagmanager.RefreshName();
+            DisplayTagmanager.RefreshNames();
         }
     }
 

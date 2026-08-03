@@ -58,5 +58,31 @@ namespace Nebula.Modules
                 catch { return string.Empty;}               
             }
         }
+
+        public static PlayerControl GetPlayerById(int playerId)
+        {
+            try
+            {
+                if (PlayerControl.LocalPlayer.PlayerId == playerId)
+                    return PlayerControl.LocalPlayer;
+
+                byte id = (byte)playerId;
+
+                foreach (var pc in PlayerControl.AllPlayerControls)
+                {
+                    if (pc.PlayerId == id)
+                        return pc;
+                }
+
+                return null;
+            }
+            catch (Exception e)
+            {
+                Main.Logger.LogError(e);
+                return null;
+                 
+            }
+
+        }
     }
 }
