@@ -4,11 +4,10 @@ using System.Collections;
 namespace Nebula.Patches;
 
 [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.OnGameJoined))]
-internal static class TestPatch
+internal static class DisplayTagmanager
 {
     public static void Postfix()
     {
-        Main.Logger.LogInfo("OnGameJoined called");        
         Main.Instance.StartCoroutine(DisplayName());
     }
 
@@ -28,9 +27,21 @@ internal static class TestPatch
         if (Modules.GameStates.GameStarted)
             yield break;
 
-        string displayName = TagManager.BuildName(player) + $"<color=#a54aff>{player.Data.PlayerName}</color>";
-        Main.Logger.LogInfo("Name Set");
+        string displayName = TagManager.BuildName(player);
 
         player.RpcSetName(displayName);
+    }
+
+    public static void RefreshName()
+    {
+        if (!AmongUsClient.Instance.AmHost)
+            return;
+
+        var player = PlayerControl.LocalPlayer;
+
+        if (player?.Data == null)
+            return;
+
+        player.RpcSetName(TagManager.BuildName(player));
     }
 }

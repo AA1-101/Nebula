@@ -34,7 +34,7 @@ internal static class HudInfoPatch
         if (client == null)
             return false;
 
-        if (client.NetworkMode == NetworkModes.FreePlay)
+        if (GameStates.IsFreePlay)
         {
             __instance.gameObject.SetActive(false);
             return false;

@@ -2,6 +2,7 @@
 using BepInEx.Unity.IL2CPP;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using HarmonyLib;
+using BepInEx.Logging;
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
@@ -22,8 +23,13 @@ namespace Nebula
         public const string PluginVersion = "0.0.1";
         public const string PluginDisplayVersion = "Alpha";
         public const bool IsTestBuild = true;
+
+        public static Main Instance { get; private set; }
+
         public static ManualLogSource Logger;
-        
+
+        private Coroutines coroutines;
+
         public override void Load()
         {
             Instance = this;

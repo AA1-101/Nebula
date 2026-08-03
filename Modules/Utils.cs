@@ -1,4 +1,6 @@
-﻿namespace Nebula.Modules
+﻿using InnerNet;
+
+namespace Nebula.Modules
 {
     public static class Utils
     {
@@ -53,7 +55,7 @@
             catch
             {
                 try { return (region ?? ServerManager.Instance.CurrentRegion).Name; }
-                catch { return string.Empty; }
+                catch { return string.Empty;}               
             }
         }
     }
