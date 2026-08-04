@@ -10,7 +10,9 @@ namespace Nebula.Patches
         public static bool Prefix(PlayerControl __instance,string chatText)
         {
             if (!chatText.StartsWith("/cmd", StringComparison.OrdinalIgnoreCase))
-                return true;            
+                return true;
+
+            Main.IsChatCommand = true;
 
             Main.Logger.LogInfo($"Chat intercepted: {chatText}");
 
@@ -21,20 +23,17 @@ namespace Nebula.Patches
             string[] split = chatText.Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
             if (split.Length == 0)
-                return false;
-
-            Main.IsChatCommand = true;
-
-            if (split.Length == 1)
             {
-                RpcSender.SendMessage(__instance,
+                RpcSender.SendMessage(
+                    __instance,
                     "Usage: /cmd <command>\nTry using /cmd help",
                     sendTo: __instance.OwnerId);
-                return false;
-            }
 
-            string command = split[1].ToLowerInvariant();
-            string[] args = split.Skip(2).ToArray();
+                return false;
+            }           
+
+            string command = split[0].ToLowerInvariant();
+            string[] args = split.Skip(1).ToArray();
 
             CommandManager.HandleCommand(__instance, command, args);
 

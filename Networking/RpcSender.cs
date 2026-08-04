@@ -18,7 +18,7 @@ namespace Nebula.Networking
 
             AmongUsClient.Instance.FinishRpcImmediately(writer);
         }
-        public static void SendMessage(PlayerControl pc, string msg, string title = "<color=#a54aff>★[Nebula-System]★</color>", int sendTo = -1)
+        public static void SendMessage(PlayerControl pc, string msg, string title = "<size=80%><color=#a54aff>★[Nebula-System]★</color></size>", int sendTo = -1)
         {
             string originalName = pc.Data.PlayerName;
 
@@ -53,9 +53,11 @@ namespace Nebula.Networking
             if (!AmongUsClient.Instance.AmHost)
                 yield break;
 
-            yield return null;
-
-            SetName(pc, name, sendTo);
-        }       
+            for (int i = 0; i < 3; i++)
+            {
+                yield return null;
+                SetName(pc, name, sendTo); //sometimes the name is not set back properly
+            }                              
+        }
     }
 }

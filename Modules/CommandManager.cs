@@ -90,6 +90,12 @@ namespace Nebula.Modules
                 case "ban":
                     BanCommand(player,args);
                     break;
+                case "tpout":
+                    TPOutCommand(player);
+                    break;
+                case "tpin":
+                    TPInCommand(player);
+                    break;
             }
         }
         public static void LoadCommands()
@@ -98,6 +104,8 @@ namespace Nebula.Modules
             AllCommands.Add(new Command("start", Command.UsageLevels.Host, Command.UsageTimes.InLobby));
             AllCommands.Add(new Command("id", Command.UsageLevels.Everyone, Command.UsageTimes.Always));
             AllCommands.Add(new Command("ban", Command.UsageLevels.Host, Command.UsageTimes.Always));
+            AllCommands.Add(new Command("tpout", Command.UsageLevels.Everyone, Command.UsageTimes.InLobby));
+            AllCommands.Add(new Command("tpin", Command.UsageLevels.Everyone, Command.UsageTimes.InLobby));
         }
 
         public static void HelpCommand(PlayerControl player)
@@ -147,7 +155,7 @@ namespace Nebula.Modules
 
             foreach (PlayerControl pc in PlayerControl.AllPlayerControls)
             {
-                message += $"\n<b>{pc.Data.PlayerName} - {pc.PlayerId}</b>";
+                message += $"\n<b>{pc.Data.PlayerName} - ID[{pc.PlayerId}]</b>";
             }
 
             RpcSender.SendMessage(player, message, sendTo: player.OwnerId);
@@ -178,6 +186,15 @@ namespace Nebula.Modules
             AmongUsClient.Instance.KickPlayer(target.OwnerId, true);
 
             RpcSender.SendMessage(player, $"{target.Data.PlayerName} has been banned");
+        }
+        public static void TPOutCommand(PlayerControl player)
+        {
+            player.transform.position = new Vector2(0.1f, 3.8f);
+        }
+
+        public static void TPInCommand(PlayerControl player)
+        {
+            player.transform.position= new Vector2(-0.2f, 1.3f);
         }
     }
 }

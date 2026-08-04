@@ -7,6 +7,7 @@ using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
 using Nebula.Modules;
+using AmongUs.Data;
 
 namespace Nebula
 {
@@ -38,6 +39,7 @@ namespace Nebula
             Instance = this;
             Logger = Log;           
             Log.LogInfo("Nebula Loaded!");
+            ConfigurationManager.Load();
             CommandManager.LoadCommands();
             Harmony harmony = new Harmony(Main.PluginGuid);
             coroutines = AddComponent<Coroutines>();
