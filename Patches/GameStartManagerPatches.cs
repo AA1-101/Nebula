@@ -13,7 +13,7 @@ namespace Nebula.Patches
     }
     [HarmonyPatch(typeof(GameStartManager), nameof (GameStartManager.Update))]
 
-    public class StartGameShortcut
+    public class GameStartManagerUpdatePatch
     {
         public static void Postfix()
         {
@@ -21,8 +21,7 @@ namespace Nebula.Patches
                 return;
 
             // compare the instance startState to the enum values
-            if (GameStartManager.Instance.startState == GameStartManager.StartingStates.Starting
-                || GameStartManager.Instance.startState == GameStartManager.StartingStates.Countdown)
+            if (GameStartManager.Instance.startState == GameStartManager.StartingStates.Starting)
                 return;
 
             // ensure Alt + S is required (fix precedence)
@@ -30,6 +29,12 @@ namespace Nebula.Patches
                 && Input.GetKeyDown(KeyCode.S))
             {
                 GameStartManager.Instance.BeginGame();
+            }
+
+            if ((Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt))
+                && Input.GetKeyDown(KeyCode.C))
+            {
+                GameStartManager.Instance.ResetStartState();
             }
         }
     }

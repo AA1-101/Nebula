@@ -9,5 +9,6 @@ namespace Nebula.Modules
         public static bool IsOnlineGame => AmongUsClient.Instance.NetworkMode == NetworkModes.OnlineGame;
         public static bool IsLocalGame => AmongUsClient.Instance.NetworkMode == NetworkModes.LocalGame;
         public static bool IsFreePlay => AmongUsClient.Instance.NetworkMode == NetworkModes.FreePlay;
+        public static bool IsStarting => GameStartManager.Instance != null && GameStartManager.Instance.startState == GameStartManager.StartingStates.Countdown;
     }
 }

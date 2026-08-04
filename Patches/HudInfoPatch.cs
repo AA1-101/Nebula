@@ -52,7 +52,7 @@ internal static class HudInfoPatch
 
         Sb.Clear();
 
-        Sb.Append(inGame ? "<size=1.6>" : "<size=2.2>");
+        Sb.Append(inGame ? "<size=2.0>" : "<size=2.2>");
 
         // Header
         Sb.Append("<color=#a54aff>Nebula</color> ")

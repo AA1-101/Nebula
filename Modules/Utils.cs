@@ -82,7 +82,25 @@ namespace Nebula.Modules
                 return null;
                  
             }
+        }
 
+        public static PlayerControl GetPlayerByClientId(int clientId)
+        {
+            foreach (PlayerControl pc in PlayerControl.AllPlayerControls)
+            {
+                if (pc.OwnerId == clientId)
+                    return pc;
+            }
+
+            return null;
+        }
+
+        public static void CheckServerCommand(ref string text)
+        {
+            if (text.StartsWith("/cmd"))
+            {
+                text = "/" + text[4..].TrimStart();
+            }
         }
     }
 }

@@ -6,6 +6,7 @@ using BepInEx.Logging;
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
+using Nebula.Modules;
 
 namespace Nebula
 {
@@ -30,11 +31,14 @@ namespace Nebula
 
         private Coroutines coroutines;
 
+        public static bool IsChatCommand;
+
         public override void Load()
         {
             Instance = this;
             Logger = Log;           
-            Log.LogInfo("Nebula Loaded!");            
+            Log.LogInfo("Nebula Loaded!");
+            CommandManager.LoadCommands();
             Harmony harmony = new Harmony(Main.PluginGuid);
             coroutines = AddComponent<Coroutines>();
             harmony.PatchAll();
