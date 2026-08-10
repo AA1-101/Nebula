@@ -12,7 +12,6 @@ namespace Nebula.Patches
         }
     }
     [HarmonyPatch(typeof(GameStartManager), nameof (GameStartManager.Update))]
-
     public class GameStartManagerUpdatePatch
     {
         public static void Postfix()
