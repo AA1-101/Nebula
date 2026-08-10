@@ -10,5 +10,7 @@ namespace Nebula.Modules
         public static bool IsLocalGame => AmongUsClient.Instance.NetworkMode == NetworkModes.LocalGame;
         public static bool IsFreePlay => AmongUsClient.Instance.NetworkMode == NetworkModes.FreePlay;
         public static bool IsStarting => GameStartManager.Instance != null && GameStartManager.Instance.startState == GameStartManager.StartingStates.Countdown;
+        public static bool IsInMeeting => MeetingHud.Instance != null;
+
     }
 }
