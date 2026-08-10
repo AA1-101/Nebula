@@ -1,9 +1,6 @@
-﻿using HarmonyLib;
-using System.Collections;
+﻿using System.Collections;
 
 namespace Nebula.Modules;
-
-[HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.OnPlayerJoined))]
 public static class DisplayTagManager
 {  
     public static IEnumerator DisplayName()
@@ -27,7 +24,15 @@ public static class DisplayTagManager
             if (pc.Data == null)
                 continue;
 
-            pc.RpcSetName(TagManager.BuildName(pc));
+            string displayName = TagManager.BuildName(pc);
+
+            Main.Logger.LogInfo($"Current: {pc.Data.PlayerName}");
+            Main.Logger.LogInfo($"Built: {displayName}");
+
+            if (pc.Data.PlayerName == displayName)
+                continue;
+
+            pc.RpcSetName(displayName);
         }
     }
 
@@ -41,7 +46,15 @@ public static class DisplayTagManager
             if (pc.Data == null)
                 continue;
 
-            pc.RpcSetName(TagManager.BuildName(pc));
+            string displayName = TagManager.BuildName(pc);
+
+            Main.Logger.LogInfo($"Current: {pc.Data.PlayerName}");
+            Main.Logger.LogInfo($"Built: {displayName}");
+
+            if (pc.Data.PlayerName == displayName)
+                continue;           
+
+            pc.RpcSetName(displayName);
         }
     }   
 }
