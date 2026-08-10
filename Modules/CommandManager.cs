@@ -1,7 +1,4 @@
-﻿using HarmonyLib;
-using Nebula.Networking;
-using Rewired.Utils.Classes.Data;
-using System.Collections;
+﻿using Nebula.Networking;
 using UnityEngine;
 
 namespace Nebula.Modules
@@ -29,7 +26,8 @@ namespace Nebula.Modules
         {
             Always,
             InLobby,
-            InGame            
+            InGame,
+            InMeeting
         }
 
         public static bool CanUseCommand(PlayerControl pc, Command cmd)
@@ -43,6 +41,8 @@ namespace Nebula.Modules
             switch (cmd.UsageTime)
             {
                 case UsageTimes.InLobby when GameStates.GameStarted || GameStates.IsStarting:
+                case UsageTimes.InGame  when !GameStates.GameStarted || GameStates.IsStarting:
+                case UsageTimes.InMeeting when !GameStates.IsInMeeting || GameStates.IsInLobby:
                     return false;
             }
 
@@ -107,6 +107,35 @@ namespace Nebula.Modules
             AllCommands.Add(new Command("tpout", Command.UsageLevels.Everyone, Command.UsageTimes.InLobby));
             AllCommands.Add(new Command("tpin", Command.UsageLevels.Everyone, Command.UsageTimes.InLobby));
         }
+
+        public static bool OnReceiveChat(PlayerControl player, string text)
+        {
+            if (text.StartsWith("/cmd", StringComparison.OrdinalIgnoreCase))
+            {
+                Utils.CheckServerCommand(ref text);
+                text = text[1..];
+
+                string[] split = text.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
+                if (split.Length == 0)
+                {
+                    RpcSender.SendMessage(
+                        player,
+                        "Usage: /cmd <command>\nTry using /cmd help",
+                        sendTo: player.OwnerId);
+
+                    return false;
+                }
+                string command = split[0].ToLowerInvariant();
+                string[] args = split.Skip(1).ToArray();
+
+                HandleCommand(player, command, args);
+
+                return false;
+            }
+            return true;
+        }
+
 
         public static void HelpCommand(PlayerControl player)
         {
