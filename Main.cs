@@ -1,13 +1,12 @@
 ﻿using BepInEx;
+using BepInEx.Logging;
 using BepInEx.Unity.IL2CPP;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using HarmonyLib;
-using BepInEx.Logging;
+using Nebula.Modules;
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
-using Nebula.Modules;
-using AmongUs.Data;
 
 namespace Nebula
 {
@@ -21,7 +20,7 @@ namespace Nebula
     [SuppressMessage("Interoperability", "CA1416:Validate platform compatibility")]
     public class Main : BasePlugin
     {
-        public const string PluginGuid = "com.aa-101.nebula";
+        public const string PluginGuid = "github.com.AA1-10.Nebula";
         public const string PluginVersion = "0.0.1";
         public const string PluginDisplayVersion = "Alpha";
         public const bool IsTestBuild = true;
