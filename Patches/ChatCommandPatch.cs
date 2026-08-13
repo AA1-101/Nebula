@@ -1,6 +1,5 @@
 ﻿using HarmonyLib;
 using Nebula.Modules;
-using Nebula.Networking;
 
 namespace Nebula.Patches
 {
