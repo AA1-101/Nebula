@@ -1,4 +1,5 @@
 ﻿using Hazel;
+using UnityEngine;
 using System.Collections;
 
 namespace Nebula.Networking
@@ -46,7 +47,7 @@ namespace Nebula.Networking
                 writer.Write(pc.Data.NetId);
                 writer.Write(name);
             }, sendTo);
-        }
+        }     
 
         public static IEnumerator RestoreNameNextFrame(PlayerControl pc, string name, int sendTo = -1)
         {
