@@ -24,6 +24,9 @@ public static class DisplayTagManager
             if (pc.Data == null)
                 continue;
 
+            while (string.IsNullOrEmpty(pc.Data.PlayerName))
+                yield return null;
+
             string displayName = TagManager.BuildName(pc);
 
             Main.Logger.LogInfo($"Current: {pc.Data.PlayerName}");
@@ -36,15 +39,18 @@ public static class DisplayTagManager
         }
     }
 
-    public static void RefreshNames()
+    public static IEnumerator RefreshNames()
     {
         if (!AmongUsClient.Instance.AmHost)
-            return;
+            yield break;
 
         foreach (PlayerControl pc in PlayerControl.AllPlayerControls)
         {
             if (pc.Data == null)
                 continue;
+
+            while (string.IsNullOrEmpty(pc.Data.PlayerName))
+                yield return null;
 
             string displayName = TagManager.BuildName(pc);
 
@@ -52,7 +58,7 @@ public static class DisplayTagManager
             Main.Logger.LogInfo($"Built: {displayName}");
 
             if (pc.Data.PlayerName == displayName)
-                continue;           
+                continue;
 
             pc.RpcSetName(displayName);
         }
