@@ -79,11 +79,9 @@ namespace Nebula.Modules
                 case "help":
                     HelpCommand(player);
                     break;
-
                 case "start":
                     StartCommand(player, args);
                     break;
-
                 case "id":
                     IdCommand(player);
                     break;
@@ -218,12 +216,12 @@ namespace Nebula.Modules
         }
         public static void TPOutCommand(PlayerControl player)
         {
-            player.transform.position = new Vector2(0.1f, 3.8f);
+            player.Teleport(new Vector2(0.1f, 3.8f));
         }
 
         public static void TPInCommand(PlayerControl player)
         {
-            player.transform.position= new Vector2(-0.2f, 1.3f);
+            player.Teleport(new Vector2(-0.2f, 1.3f));
         }
     }
 }
