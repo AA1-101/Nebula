@@ -18,11 +18,8 @@ namespace Nebula.Modules
             if (!File.Exists(configPath))
             {
                 File.Create(configPath);
-                Main.Logger.LogInfo($"Creating config.json at: {configPath}");
-                
-            }              
-                                           
-        }
-                
+                Main.Logger.LogInfo($"Creating config.json at: {configPath}");                
+            }                                                      
+        }                
     }
 }
