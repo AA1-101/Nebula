@@ -32,7 +32,6 @@ namespace Nebula
         private Coroutines coroutines;
 
         public static bool IsChatCommand;
-
         public override void Load()
         {
             Instance = this;
