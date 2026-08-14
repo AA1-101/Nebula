@@ -34,11 +34,11 @@ namespace Nebula.Networking
                             bool canOverriddenRole = subReader.ReadBoolean();
                             break;
                         case RpcCalls.SendChat:
-                            string text = subReader.ReadString();
-                            if (!CommandManager.OnReceiveChat(__instance, text))
+                            string chatText = subReader.ReadString();
+                            if (!CommandManager.OnReceiveChat(__instance, chatText))
                             {
                                 return false;
-                            }
+                            }                                         
                             break;
                         case RpcCalls.SendQuickChat:
                             string quickText = QuickChatNetData.Deserialize(subReader).ToChatText();
