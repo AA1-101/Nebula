@@ -28,7 +28,7 @@ namespace Nebula.Networking
             if (sendTo == -1 && HudManager.InstanceExists)
             {
                 pc.SetName(title);
-                HudManager.Instance.Chat.AddChat(pc, msg);
+                HudManager.Instance.Chat.AddChat(pc, msg, false);
                 pc.SetName(originalName);
             }
 
@@ -39,7 +39,7 @@ namespace Nebula.Networking
                 writer.Write(msg);
             }, sendTo);
 
-            Main.Instance.StartCoroutine(RestoreNameNextFrame(pc, originalName, sendTo));
+            Main.Instance.StartCoroutine(RestoreNameNextFrame(pc, originalName, sendTo));            
         }
 
         public static void SetName(PlayerControl pc, string name, int sendTo = -1)
