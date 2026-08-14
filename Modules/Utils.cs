@@ -95,6 +95,18 @@ namespace Nebula.Modules
             return null;
         }
 
+        public static PlayerControl GetHost()
+        {
+            foreach (PlayerControl pc in PlayerControl.AllPlayerControls)
+            {
+                if (pc.OwnerId == AmongUsClient.Instance.HostId)
+                {
+                    return pc;
+                }                
+            }
+            return null;
+        }
+
         public static void CheckServerCommand(ref string text)
         {
             if (text.StartsWith("/cmd"))
