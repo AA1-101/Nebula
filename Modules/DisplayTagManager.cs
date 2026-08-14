@@ -1,8 +1,11 @@
 ﻿using System.Collections;
 
 namespace Nebula.Modules;
+
 public static class DisplayTagManager
-{  
+{
+    public static Dictionary<byte, string> OriginalNames = new();
+
     public static IEnumerator DisplayName()
     {
         while (PlayerControl.LocalPlayer == null)
@@ -27,7 +30,10 @@ public static class DisplayTagManager
             while (string.IsNullOrEmpty(pc.Data.PlayerName))
                 yield return null;
 
-            string displayName = TagManager.BuildName(pc);
+            if (!OriginalNames.ContainsKey(pc.PlayerId))
+                OriginalNames[pc.PlayerId] = pc.Data.PlayerName;
+
+            string displayName = TagManager.BuildName(pc, OriginalNames[pc.PlayerId]);
 
             Main.Logger.LogInfo($"Current: {pc.Data.PlayerName}");
             Main.Logger.LogInfo($"Built: {displayName}");
@@ -52,7 +58,10 @@ public static class DisplayTagManager
             while (string.IsNullOrEmpty(pc.Data.PlayerName))
                 yield return null;
 
-            string displayName = TagManager.BuildName(pc);
+            if (!OriginalNames.ContainsKey(pc.PlayerId))
+                OriginalNames[pc.PlayerId] = pc.Data.PlayerName;
+
+            string displayName = TagManager.BuildName(pc, OriginalNames[pc.PlayerId]);
 
             Main.Logger.LogInfo($"Current: {pc.Data.PlayerName}");
             Main.Logger.LogInfo($"Built: {displayName}");
@@ -62,5 +71,5 @@ public static class DisplayTagManager
 
             pc.RpcSetName(displayName);
         }
-    }   
+    }
 }
