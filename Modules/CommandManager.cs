@@ -1,4 +1,6 @@
-﻿using Nebula.Networking;
+﻿using InnerNet;
+using JetBrains.Annotations;
+using Nebula.Networking;
 using UnityEngine;
 using Random = System.Random;
 
@@ -105,6 +107,9 @@ namespace Nebula.Modules
                 case "8ball":
                     EightBallCommand(player, args);
                     break;
+                case "pi":
+                    PlayerInformationCommand(player, args);
+                    break;
             }
         }
         public static void LoadCommands()
@@ -117,6 +122,7 @@ namespace Nebula.Modules
             AllCommands.Add(new Command("tpin", Command.UsageLevels.Everyone, Command.UsageTimes.InLobby));
             AllCommands.Add(new Command("hwhisper", Command.UsageLevels.Everyone, Command.UsageTimes.InLobby));
             AllCommands.Add(new Command("8ball", Command.UsageLevels.Everyone, Command.UsageTimes.InLobby));
+            AllCommands.Add(new Command("pi", Command.UsageLevels.Everyone, Command.UsageTimes.Always));
         }
 
         public static bool OnReceiveChat(PlayerControl player, string text)
@@ -202,7 +208,7 @@ namespace Nebula.Modules
         {
             if (args.Length == 0 || !int.TryParse(args[0], out int id))
             {
-                RpcSender.SendMessage("Usage: /cmd ban <id>", sendTo: player.OwnerId);
+                RpcSender.SendMessage("Usage: /cmd ban (id)", sendTo: player.OwnerId);
                 return;
             }            
 
@@ -307,8 +313,31 @@ namespace Nebula.Modules
                     RpcSender.SendMessage($"{player.Data.PlayerName} asked.....\"{message}\" \n" +
                      $"The answer is I have absolutely no clue");
                     break;
+            }        
+                      
+        }
+        public static void PlayerInformationCommand(PlayerControl player, string[] args)
+        {
+            if (args.Length == 0 || !int.TryParse(args[0], out int id))
+            {
+                RpcSender.SendMessage("Usage: /cmd pi (id)", sendTo: player.OwnerId);
+                return;
             }
-                        
+            PlayerControl target = Utils.GetPlayerById(id);
+
+            if (target == null)
+            {
+                RpcSender.SendMessage("Player not found.", sendTo: player.OwnerId);
+                return;
+            }
+
+            ClientData clientData = target.GetClientData();
+
+            RpcSender.SendMessage($"<size=120%><b>{target.Data.PlayerName} Info</b></size>\n" +
+                $"<b>OS: {clientData.PlatformData.Platform}</b>\n" +
+                $"<b>ID: {target.Data.PlayerId}</b>\n" +
+                $"<b>Friend-Code: {target.Data.FriendCode}</b>\n" +
+                $"<b>Level: {target.Data.PlayerLevel}</b>", sendTo: player.OwnerId);
         }
     }
 }
