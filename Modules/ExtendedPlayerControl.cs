@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using InnerNet;
+using UnityEngine;
 
 namespace Nebula.Modules
 {
@@ -24,6 +25,14 @@ namespace Nebula.Modules
                     return;
 
                 nt.RpcSnapTo(location);
+            }
+
+            public ClientData GetClientData()
+            {
+                if (player == null)
+                    return null;
+
+                return AmongUsClient.Instance.GetClientFromCharacter(player);
             }
         }
     }
