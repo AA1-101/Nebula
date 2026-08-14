@@ -11,7 +11,7 @@ namespace Nebula.Patches
             if (!AmongUsClient.Instance.AmHost)
                 return;
 
-            DisplayTagManager.RefreshNames();
+            Main.Instance.StartCoroutine(DisplayTagManager.RefreshNames()); 
         }
     }
 }

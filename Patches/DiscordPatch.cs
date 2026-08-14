@@ -22,7 +22,7 @@ public static class DiscordPatch
         activity.Assets = new ActivityAssets
         {
             LargeImage = "https://i.ibb.co/Q3r7nKCV/file-00B0000005f9472079c2f406e2ae9a354.png"
-        };
+        }; //huge thanks to https://github.com/crescent-ruby for the image!!!
 
         try
         {

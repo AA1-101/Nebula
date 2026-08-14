@@ -1,5 +1,5 @@
 ﻿using Hazel;
-using UnityEngine;
+using Nebula.Modules;
 using System.Collections;
 
 namespace Nebula.Networking
@@ -19,8 +19,10 @@ namespace Nebula.Networking
 
             AmongUsClient.Instance.FinishRpcImmediately(writer);
         }
-        public static void SendMessage(PlayerControl pc, string msg, string title = "<size=80%><color=#a54aff>★[Nebula-System]★</color></size>", int sendTo = -1)
+        public static void SendMessage(string msg, string title = "<size=80%><color=#a54aff>★[Nebula-System]★</color></size>", int sendTo = -1)
         {
+            PlayerControl pc = Utils.GetHost();
+
             string originalName = pc.Data.PlayerName;
 
             if (sendTo == -1 && HudManager.InstanceExists)
