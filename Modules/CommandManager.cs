@@ -1,5 +1,6 @@
 ﻿using Nebula.Networking;
 using UnityEngine;
+using Random = System.Random;
 
 namespace Nebula.Modules
 {
@@ -64,13 +65,17 @@ namespace Nebula.Modules
 
             if (cmd == null)
             {
-                RpcSender.SendMessage(player, "Unknown command.\nTry using /cmd help");
+                RpcSender.SendMessage(
+                    "Unknown command.\nTry using /cmd help",
+                    sendTo: player.OwnerId);
                 return;
             }
 
             if (!Command.CanUseCommand(player, cmd))
             {
-                RpcSender.SendMessage(player, "You cannot use this command!");
+                RpcSender.SendMessage(
+                    "You cannot use this command!",
+                    sendTo: player.OwnerId);
                 return;
             }
 
@@ -87,12 +92,18 @@ namespace Nebula.Modules
                     break;
                 case "ban":
                     BanCommand(player,args);
-                    break;
+                    break;              
                 case "tpout":
                     TPOutCommand(player);
                     break;
                 case "tpin":
                     TPInCommand(player);
+                    break;
+                case "hwhisper":
+                    HWhisper(player,args);
+                    break;
+                case "8ball":
+                    EightBallCommand(player, args);
                     break;
             }
         }
@@ -104,6 +115,8 @@ namespace Nebula.Modules
             AllCommands.Add(new Command("ban", Command.UsageLevels.Host, Command.UsageTimes.Always));
             AllCommands.Add(new Command("tpout", Command.UsageLevels.Everyone, Command.UsageTimes.InLobby));
             AllCommands.Add(new Command("tpin", Command.UsageLevels.Everyone, Command.UsageTimes.InLobby));
+            AllCommands.Add(new Command("hwhisper", Command.UsageLevels.Everyone, Command.UsageTimes.InLobby));
+            AllCommands.Add(new Command("8ball", Command.UsageLevels.Everyone, Command.UsageTimes.InLobby));
         }
 
         public static bool OnReceiveChat(PlayerControl player, string text)
@@ -117,10 +130,7 @@ namespace Nebula.Modules
 
                 if (split.Length == 0)
                 {
-                    RpcSender.SendMessage(
-                        player,
-                        "Usage: /cmd <command>\nTry using /cmd help",
-                        sendTo: player.OwnerId);
+                    RpcSender.SendMessage("Usage: /cmd <command>\nTry using /cmd help",sendTo: player.OwnerId);
 
                     return false;
                 }
@@ -151,7 +161,7 @@ namespace Nebula.Modules
 
             Main.Logger.LogInfo($"Sending message: {message}");
 
-            RpcSender.SendMessage(player, message, sendTo: player.OwnerId);
+            RpcSender.SendMessage(message, sendTo: player.OwnerId);
         }
 
         public static void StartCommand(PlayerControl player, string[] args)
@@ -167,7 +177,7 @@ namespace Nebula.Modules
 
             if (GameStates.IsStarting)
             {
-                RpcSender.SendMessage(player, "Game is already starting!", sendTo: player.OwnerId);
+                RpcSender.SendMessage("Game is already starting!", sendTo: player.OwnerId);
                 return;
             }
 
@@ -185,14 +195,14 @@ namespace Nebula.Modules
                 message += $"\n<b>{pc.Data.PlayerName} - ID[{pc.PlayerId}]</b>";
             }
 
-            RpcSender.SendMessage(player, message, sendTo: player.OwnerId);
+            RpcSender.SendMessage(message, sendTo: player.OwnerId);
         }
 
         public static void BanCommand(PlayerControl player, string[] args)
         {
             if (args.Length == 0 || !int.TryParse(args[0], out int id))
             {
-                RpcSender.SendMessage(player, "Usage: /cmd ban <id>", sendTo: player.OwnerId);
+                RpcSender.SendMessage("Usage: /cmd ban <id>", sendTo: player.OwnerId);
                 return;
             }            
 
@@ -200,19 +210,19 @@ namespace Nebula.Modules
 
             if (target == null)
             {
-                RpcSender.SendMessage(player, "Player not found.", sendTo: player.OwnerId);
+                RpcSender.SendMessage("Player not found.", sendTo: player.OwnerId);
                 return;
             }
 
             if (target == player)
             {
-                RpcSender.SendMessage(player, "You cannot ban yourself!", sendTo: player.OwnerId);
+                RpcSender.SendMessage("You cannot ban yourself!", sendTo: player.OwnerId);
                 return;
             }
 
             AmongUsClient.Instance.KickPlayer(target.OwnerId, true);
 
-            RpcSender.SendMessage(player, $"{target.Data.PlayerName} has been banned");
+            RpcSender.SendMessage($"{target.Data.PlayerName} has been banned");
         }
         public static void TPOutCommand(PlayerControl player)
         {
@@ -222,6 +232,83 @@ namespace Nebula.Modules
         public static void TPInCommand(PlayerControl player)
         {
             player.Teleport(new Vector2(-0.2f, 1.3f));
+        }
+
+        public static void HWhisper(PlayerControl sender,string[] args)
+        {
+            PlayerControl host = Utils.GetHost();
+
+            if (args.Length == 0)
+            {
+                RpcSender.SendMessage("Invalid message.\n Please use /cmd hwhisper (sentence).",sendTo: sender.OwnerId);
+                return;
+            }
+
+            if (sender == host)
+            {
+                RpcSender.SendMessage("You can't whisper to yourself!", sendTo: host.OwnerId);
+                return;
+            }           
+
+            string message = string.Join(" ", args);
+
+            if (message.Length > 100)
+            {
+                RpcSender.SendMessage("Message too long!", sendTo: sender.OwnerId);
+                return;
+            }
+
+            RpcSender.SendMessage($"{sender.Data.PlayerName} is saying:\n {message}", sendTo: host.OwnerId);
+        }
+
+        public static void EightBallCommand(PlayerControl player, string[] args)
+        {
+            if (args.Length == 0)
+            {
+                RpcSender.SendMessage("Invalid message.\n Please use /cmd 8ball (sentence).", sendTo: player.OwnerId);
+                return;
+            }
+            string message = string.Join(" ", args);
+
+            if (message.Length > 100)
+            {
+                RpcSender.SendMessage("Message too long!", sendTo: player.OwnerId);
+                return;
+            }
+
+            Random random = new();
+
+            int result = random.Next(1, 6);       
+            
+            switch(result)
+            {
+                case 1:
+                    RpcSender.SendMessage($"{player.Data.PlayerName} asked.....\"{message}\" \n" +
+                        $"The answer is yes");
+                    break;
+                case 2:
+                    RpcSender.SendMessage($"{player.Data.PlayerName} asked.....\"{message}\" \n" +
+                      $"The answer is no");
+                    break;
+                case 3:
+                    RpcSender.SendMessage($"{player.Data.PlayerName} asked.....\"{message}\" \n" +
+                      $"The answer is maybe");
+                    break;
+                case 4:
+                    RpcSender.SendMessage($"{player.Data.PlayerName} asked.....\"{message}\" \n" +
+                      $"The answer is maybe not");
+                    break;
+                case 5:
+                    RpcSender.SendMessage($"{player.Data.PlayerName} asked.....\"{message}\" \n" +
+                      $"The answer is I have absolutely no clue");
+                    break;
+
+                default:
+                    RpcSender.SendMessage($"{player.Data.PlayerName} asked.....\"{message}\" \n" +
+                     $"The answer is I have absolutely no clue");
+                    break;
+            }
+                        
         }
     }
 }
