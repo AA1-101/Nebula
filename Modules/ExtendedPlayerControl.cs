@@ -9,8 +9,8 @@ namespace Nebula.Modules
             public bool IsHost()
             {
                 return player != null
-                    && AmongUsClient.Instance != null
-                    && player.OwnerId == AmongUsClient.Instance.HostId;
+                   && AmongUsClient.Instance != null
+                   && player.OwnerId == AmongUsClient.Instance.HostId;
             }
 
             public void Teleport(Vector2 location)
@@ -18,8 +18,7 @@ namespace Nebula.Modules
                 if (player == null)
                     return;
 
-                CustomNetworkTransform nt =
-                    player.GetComponent<CustomNetworkTransform>();
+                CustomNetworkTransform nt = player.GetComponent<CustomNetworkTransform>();
 
                 if (nt == null)
                     return;
