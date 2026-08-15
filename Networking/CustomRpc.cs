@@ -2,6 +2,6 @@
 {
     public enum CustomRpc : byte
     {
-        
+        ModdedClientInfo = 100
     }
 }

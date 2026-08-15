@@ -3,6 +3,8 @@ using AmongUs.QuickChat;
 using HarmonyLib;
 using Hazel;
 using Nebula.Modules;
+using System.Collections;
+using UnityEngine;
 
 namespace Nebula.Networking
 {
@@ -15,9 +17,9 @@ namespace Nebula.Networking
             MessageReader subReader = MessageReader.Get(reader);
 
             try
-            {            
+            {
                 if (__instance != null)
-                {                
+                {
                     switch (rpcType)
                     {
                         case RpcCalls.SetName:
@@ -38,18 +40,18 @@ namespace Nebula.Networking
                             if (!CommandManager.OnReceiveChat(__instance, chatText))
                             {
                                 return false;
-                            }                                         
+                            }
                             break;
                         case RpcCalls.SendQuickChat:
                             string quickText = QuickChatNetData.Deserialize(subReader).ToChatText();
-                            CommandManager.OnReceiveChat(__instance, quickText);                      
+                            CommandManager.OnReceiveChat(__instance, quickText);
                             break;
                         case RpcCalls.StartMeeting:
                             PlayerControl p = Utils.GetPlayerById(subReader.ReadByte());
                             break;
                         case RpcCalls.Pet:
                             break;
-                    }                   
+                    }
                 }
             }
             finally
@@ -59,5 +61,55 @@ namespace Nebula.Networking
 
             return true;
         }
+        public static void Postfix(PlayerControl __instance, [HarmonyArgument(0)] byte callId, [HarmonyArgument(1)] MessageReader reader)
+        {
+            var rpcType = (CustomRpc)callId;
+
+            switch (rpcType)
+            {
+                case CustomRpc.ModdedClientInfo:
+
+                    if (!AmongUsClient.Instance.AmHost)
+                        return;
+
+                    string guid = reader.ReadString();
+                    string version = reader.ReadString();
+
+                    if (guid == Main.PluginGuid && version == Main.PluginVersion)
+                    {
+                        if (Main.ModdedClients.ContainsKey(__instance.PlayerId))
+                            return;
+
+                        Main.ModdedClients.Add(__instance.PlayerId, __instance);
+                        Main.Logger.LogInfo($"{__instance.Data.PlayerName} recognized as Nebula Client");
+                    }
+                    else
+                    {
+                        Main.Instance.StartCoroutine(RPC.VersionMismatch(__instance));
+                    }
+
+                    break;
+            }
+
+        }
+    }
+
+    internal static class RPC
+    {
+        public static IEnumerator VersionMismatch(PlayerControl player)
+        {
+            RpcSender.SendMessage($"{player.Data.PlayerName}, you are running the wrong verion of Nebula!\n" +
+                $"You will be kicked in 5 seconds. Please update.", sendTo: player.OwnerId);
+
+            yield return new WaitForSeconds(3f);
+
+            AmongUsClient.Instance.KickPlayer(player.PlayerId, false);
+
+            PlayerControl host = Utils.GetHost();
+
+            RpcSender.SendMessage($"{player.Data.PlayerName} was kicked for having the wrong version", sendTo: host.OwnerId);
+        }
     }
 }
+
+

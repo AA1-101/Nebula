@@ -1,4 +1,5 @@
-﻿using Hazel;
+﻿using BepInEx.Unity.IL2CPP.UnityEngine;
+using Hazel;
 using Nebula.Modules;
 using System.Collections;
 
@@ -6,14 +7,21 @@ namespace Nebula.Networking
 {
     public static class RpcSender
     {
-       public static void Send(uint netId,
-           RpcCalls rpcCalls,
-           Action<MessageWriter> write,
-           int sendTo = -1)
+        public static void Send(uint netId, RpcCalls rpcCalls, Action<MessageWriter> write, int sendTo = -1)
         {
-            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(netId, 
+            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(netId,
                 (byte)rpcCalls,
-                SendOption.Reliable,sendTo);
+                SendOption.Reliable, sendTo);
+
+            write(writer);
+
+            AmongUsClient.Instance.FinishRpcImmediately(writer);
+        }
+        public static void SendCustomRpc(uint netId, CustomRpc rpcCalls, Action<MessageWriter> write, int sendTo = -1)
+        {
+            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(netId,
+                (byte)rpcCalls,
+                SendOption.Reliable, sendTo);
 
             write(writer);
 
@@ -39,7 +47,7 @@ namespace Nebula.Networking
                 writer.Write(msg);
             }, sendTo);
 
-            Main.Instance.StartCoroutine(RestoreNameNextFrame(pc, originalName, sendTo));            
+            Main.Instance.StartCoroutine(RestoreNameNextFrame(pc, originalName, sendTo));
         }
 
         public static void SetName(PlayerControl pc, string name, int sendTo = -1)
@@ -49,7 +57,7 @@ namespace Nebula.Networking
                 writer.Write(pc.Data.NetId);
                 writer.Write(name);
             }, sendTo);
-        }     
+        }
 
         public static IEnumerator RestoreNameNextFrame(PlayerControl pc, string name, int sendTo = -1)
         {
@@ -60,7 +68,24 @@ namespace Nebula.Networking
             {
                 yield return null;
                 SetName(pc, name, sendTo); //sometimes the name is not set back properly
-            }                              
+            }
+        }
+        
+
+        public static void SendHandshake(PlayerControl sender)
+        {
+            if (sender.IsHost())
+                return;
+
+            PlayerControl host = Utils.GetHost();
+
+            SendCustomRpc(sender.NetId, CustomRpc.ModdedClientInfo,
+                write =>
+                {
+                    write.Write(Main.PluginGuid);
+                    write.Write(Main.PluginVersion);
+                }, host.OwnerId);
         }
     }
 }
+
