@@ -1,7 +1,7 @@
 ﻿using HarmonyLib;
 using Nebula.Modules;
 
-namespace EHR.Patches;
+namespace Nebula.Patches;
 
 [HarmonyPatch(typeof(Constants), nameof(Constants.GetBroadcastVersion))] //https://github.com/Gurge44/EndlessHostRoles/blob/main/Patches/ServerVersionPatch.cs
 internal static class ServerUpdatePatch
