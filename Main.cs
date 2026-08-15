@@ -32,6 +32,7 @@ namespace Nebula
         private Coroutines coroutines;
 
         public static bool IsChatCommand;
+        public static Dictionary<byte, PlayerControl> ModdedClients;
         public override void Load()
         {
             Instance = this;
