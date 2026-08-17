@@ -41,7 +41,12 @@ namespace Nebula.Networking
                             {
                                 return false;
                             }
-                            break;
+                            if (DestroyableSingleton<HudManager>.Instance)
+                            {
+                                DestroyableSingleton<HudManager>.Instance.Chat.AddChat(__instance, chatText, false);
+                                return false; ;
+                            }
+                            return false;                            
                         case RpcCalls.SendQuickChat:
                             string quickText = QuickChatNetData.Deserialize(subReader).ToChatText();
                             CommandManager.OnReceiveChat(__instance, quickText);
@@ -99,9 +104,9 @@ namespace Nebula.Networking
         public static IEnumerator VersionMismatch(PlayerControl player)
         {
             RpcSender.SendMessage($"{player.Data.PlayerName}, you are running the wrong verion of Nebula!\n" +
-                $"You will be kicked in 5 seconds. Please update.", sendTo: player.OwnerId);
+                $"You will be kicked in 5 seconds. Please change your version to {Main.PluginVersion}.", sendTo: player.OwnerId);
 
-            yield return new WaitForSeconds(3f);
+            yield return new WaitForSeconds(5f);
 
             AmongUsClient.Instance.KickPlayer(player.PlayerId, false);
 
