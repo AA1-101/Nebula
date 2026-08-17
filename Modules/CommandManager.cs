@@ -1,5 +1,4 @@
 ﻿using InnerNet;
-using JetBrains.Annotations;
 using Nebula.Networking;
 using UnityEngine;
 using Random = System.Random;
@@ -106,9 +105,18 @@ namespace Nebula.Modules
                     break;
                 case "8ball":
                     EightBallCommand(player, args);
-                    break;
+                    break;                
                 case "pi":
                     PlayerInformationCommand(player, args);
+                    break;
+                case "colour":
+                    ColourCommand(player, args);
+                    break;
+                case "BANBAN":
+                    BanBanCommand(player);
+                    break;
+                case "broadcast":
+                    BroadcastCommand(player, args);
                     break;
             }
         }
@@ -123,6 +131,9 @@ namespace Nebula.Modules
             AllCommands.Add(new Command("hwhisper", Command.UsageLevels.Everyone, Command.UsageTimes.InLobby));
             AllCommands.Add(new Command("8ball", Command.UsageLevels.Everyone, Command.UsageTimes.InLobby));
             AllCommands.Add(new Command("pi", Command.UsageLevels.Everyone, Command.UsageTimes.Always));
+            AllCommands.Add(new Command("colour", Command.UsageLevels.Everyone, Command.UsageTimes.InLobby));
+            AllCommands.Add(new Command("banban", Command.UsageLevels.Host, Command.UsageTimes.Always));
+            AllCommands.Add(new Command("broadcast", Command.UsageLevels.Host, Command.UsageTimes.Always));
         }
 
         public static bool OnReceiveChat(PlayerControl player, string text)
@@ -338,6 +349,45 @@ namespace Nebula.Modules
                 $"<b>ID: {target.Data.PlayerId}</b>\n" +
                 $"<b>Friend-Code: {target.Data.FriendCode}</b>\n" +
                 $"<b>Level: {target.Data.PlayerLevel}</b>", sendTo: player.OwnerId);
+        }
+        public static void ColourCommand(PlayerControl player, string[] args)
+        {
+            if (args.Length == 0)
+            {
+                RpcSender.SendMessage("Invalid colour.", sendTo: player.OwnerId);
+                return;
+            }
+            string message = string.Join(" ", args);
+
+            byte colour = Utils.TextToColor(message);
+
+            player.RpcSetColor(colour);
+        }
+
+        public static void BanBanCommand(PlayerControl player)
+        {
+            foreach (PlayerControl pc in PlayerControl.AllPlayerControls)
+            {
+                AmongUsClient.Instance.KickPlayer(pc.OwnerId, true);
+            }    
+        }
+        public static void BroadcastCommand(PlayerControl player, string[] args)
+        {
+            if (args.Length == 0)
+            {
+                RpcSender.SendMessage("Invalid message.\n Please use /cmd broadcast (sentence).", sendTo: player.OwnerId);
+                return;
+            }
+            string message = string.Join(" ", args);
+
+            if (message.Length > 100)
+            {
+                RpcSender.SendMessage("Message too long!", sendTo: player.OwnerId);
+                return;
+            }
+
+            RpcSender.SendMessage($"<size=120%><b>{player.Data.PlayerName} IS ANNOUNCING!!</b></size>\n\n" +
+                $"<b>{message}</b>");                
         }
     }
 }
