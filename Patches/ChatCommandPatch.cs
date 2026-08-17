@@ -1,6 +1,4 @@
-﻿using AmongUs.Data;
-using HarmonyLib;
-using UnityEngine;
+﻿using HarmonyLib;
 using Nebula.Modules;
 
 namespace Nebula.Patches
