@@ -114,5 +114,35 @@ namespace Nebula.Modules
                 text = "/" + text[4..].TrimStart();
             }
         }
+
+        public static byte TextToColor(string text)
+        {
+            text = text.ToLowerInvariant();
+
+            int color = text switch
+            {
+                "red" or "0" => 0,
+                "blue" or "1" => 1,
+                "green" or "2" => 2,
+                "pink" or "3" => 3,
+                "orange" or "4" => 4,
+                "yellow" or "5" => 5,
+                "black" or "6" => 6,
+                "white" or "7" => 7,
+                "purple" or "8" => 8,
+                "brown" or "9" => 9,
+                "cyan" or "10" => 10,
+                "lime" or "11" => 11,
+                "maroon" or "12" => 12,
+                "rose" or "13" => 13,
+                "banana" or "14" => 14,
+                "gray" or "15" => 15,
+                "tan" or "16" => 16,
+                "coral" or "17" => 17,
+                _ => -1
+            };
+
+            return color < 0 ? byte.MaxValue : (byte)color;
+        }
     }
 }
