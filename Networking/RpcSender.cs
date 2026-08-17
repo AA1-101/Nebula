@@ -1,5 +1,4 @@
-﻿using BepInEx.Unity.IL2CPP.UnityEngine;
-using Hazel;
+﻿using Hazel;
 using Nebula.Modules;
 using System.Collections;
 
@@ -69,7 +68,7 @@ namespace Nebula.Networking
                 yield return null;
                 SetName(pc, name, sendTo); //sometimes the name is not set back properly
             }
-        }
+        }    
         
 
         public static void SendHandshake(PlayerControl sender)
