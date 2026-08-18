@@ -10,7 +10,7 @@ public static class OnPlayerJoinedPatch
 {
     public static void Postfix(ClientData __instance)
     {
-        Main.Instance.StartCoroutine(DisplayTagManager.DisplayName());
+        Main.Instance.StartCoroutine(DisplayTagManager.RefreshNames());
 
         RpcSender.SendHandshake(__instance.Character);
     }
