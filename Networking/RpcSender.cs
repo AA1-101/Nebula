@@ -22,6 +22,8 @@ namespace Nebula.Networking
                 (byte)rpcCalls,
                 SendOption.Reliable, sendTo);
 
+            Main.Logger.LogInfo($"Sending custom RPC: {(byte)rpcCalls}, NetId={netId}, sendTo={sendTo}");
+
             write(writer);
 
             AmongUsClient.Instance.FinishRpcImmediately(writer);
@@ -84,6 +86,13 @@ namespace Nebula.Networking
                     write.Write(Main.PluginGuid);
                     write.Write(Main.PluginVersion);
                 }, host.OwnerId);
+        }
+        public static IEnumerator SendHandshakeWhenReady()
+        {
+            while (PlayerControl.LocalPlayer == null)
+                yield return null;
+
+            SendHandshake(PlayerControl.LocalPlayer);
         }
     }
 }
