@@ -22,7 +22,8 @@ namespace Nebula.Modules
         public enum UsageLevels
         {
             Everyone,           
-            Host            
+            Host,
+            NonHost
         }
         public enum UsageTimes
         {
@@ -37,6 +38,8 @@ namespace Nebula.Modules
             switch (cmd.UsageLevel)
             {
                 case UsageLevels.Host when !pc.IsHost():
+                    return false;
+                case UsageLevels.NonHost when pc.IsHost():
                     return false;
             }
 
@@ -112,11 +115,20 @@ namespace Nebula.Modules
                 case "colour":
                     ColourCommand(player, args);
                     break;
-                case "BANBAN":
+                case "banban":
                     BanBanCommand(player);
                     break;
                 case "broadcast":
                     BroadcastCommand(player, args);
+                    break;
+                case "setname":
+                    SetNameCommand(player, args);
+                    break;
+                case "setnameall":
+                    SetNameAllCommand(player, args);
+                    break;
+                case "resetplayerpos":
+                    ResetPlayerPosCommand(player);
                     break;
             }
         }
@@ -134,6 +146,11 @@ namespace Nebula.Modules
             AllCommands.Add(new Command("colour", Command.UsageLevels.Everyone, Command.UsageTimes.InLobby));
             AllCommands.Add(new Command("banban", Command.UsageLevels.Host, Command.UsageTimes.Always));
             AllCommands.Add(new Command("broadcast", Command.UsageLevels.Host, Command.UsageTimes.Always));
+            AllCommands.Add(new Command("setname", Command.UsageLevels.Everyone, Command.UsageTimes.InLobby));
+            AllCommands.Add(new Command("setnameall", Command.UsageLevels.Host, Command.UsageTimes.InLobby));
+            AllCommands.Add(new Command("resetplayerpos", Command.UsageLevels.Host, Command.UsageTimes.InLobby));
+
+
         }
 
         public static bool OnReceiveChat(PlayerControl player, string text)
@@ -297,7 +314,7 @@ namespace Nebula.Modules
 
             int result = random.Next(1, 6);       
             
-            switch(result)
+            switch (result)
             {
                 case 1:
                     RpcSender.SendMessage($"{player.Data.PlayerName} asked.....\"{message}\" \n" +
@@ -319,7 +336,6 @@ namespace Nebula.Modules
                     RpcSender.SendMessage($"{player.Data.PlayerName} asked.....\"{message}\" \n" +
                       $"The answer is I have absolutely no clue");
                     break;
-
                 default:
                     RpcSender.SendMessage($"{player.Data.PlayerName} asked.....\"{message}\" \n" +
                      $"The answer is I have absolutely no clue");
@@ -369,7 +385,10 @@ namespace Nebula.Modules
             foreach (PlayerControl pc in PlayerControl.AllPlayerControls)
             {
                 AmongUsClient.Instance.KickPlayer(pc.OwnerId, true);
-            }    
+                RpcSender.SendMessage($"{pc.Data.PlayerName.ToUpper()} HAS BEEN BANNED");
+            }
+
+            RpcSender.SendMessage("What did you even gain from doing that...");
         }
         public static void BroadcastCommand(PlayerControl player, string[] args)
         {
@@ -388,6 +407,62 @@ namespace Nebula.Modules
 
             RpcSender.SendMessage($"<size=120%><b>{player.Data.PlayerName} IS ANNOUNCING!!</b></size>\n\n" +
                 $"<b>{message}</b>");                
+        }
+
+        public static void SetNameCommand(PlayerControl player, string[] args)
+        {
+            if (args.Length == 0)
+            {
+                RpcSender.SendMessage("Invalid name.\n Please use /cmd setname (name).", sendTo: player.OwnerId);
+                return;
+            }
+            string name = string.Join(" ", args);
+
+            if (name.Length > 15)
+            {
+                RpcSender.SendMessage("Name too long!", sendTo: player.OwnerId);
+                return;
+            }
+
+            DisplayTagManager.OriginalNames[player.PlayerId] = name;
+            player.RpcSetName(name);
+            Main.Instance.StartCoroutine(DisplayTagManager.RefreshNames());
+
+        }
+        public static void SetNameAllCommand(PlayerControl player, string[] args)
+        {
+            if (args.Length == 0)
+            {
+                RpcSender.SendMessage("Invalid name.\n Please use /cmd setnameall (name).", sendTo: player.OwnerId);
+                return;
+            }
+            string name = string.Join(" ", args);
+
+            if (name.Length > 15)
+            {
+                RpcSender.SendMessage("Name too long!", sendTo: player.OwnerId);
+                return;
+            }
+            
+            foreach (PlayerControl pc in PlayerControl.AllPlayerControls)
+            {
+                DisplayTagManager.OriginalNames[player.PlayerId] = name;
+                player.RpcSetName(name);
+            }
+
+            Main.Instance.StartCoroutine(DisplayTagManager.RefreshNames());
+        }
+        public static void ResetPlayerPosCommand(PlayerControl player)
+        {
+            Vector2 pos = new(-0.2f, 1.3f);
+
+            foreach (PlayerControl pc in PlayerControl.AllPlayerControls)
+            {
+                if (Vector2.Distance(pc.transform.position, pos) < 0.01f)
+                    continue;
+
+                pc.Teleport(pos);
+            }
         }
     }
 }
