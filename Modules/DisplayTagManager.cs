@@ -25,7 +25,7 @@ public static class DisplayTagManager
         foreach (PlayerControl pc in PlayerControl.AllPlayerControls)
         {
             if (pc.Data == null)
-                continue;
+                yield return null;
 
             while (string.IsNullOrEmpty(pc.Data.PlayerName))
                 yield return null;
@@ -53,7 +53,7 @@ public static class DisplayTagManager
         foreach (PlayerControl pc in PlayerControl.AllPlayerControls)
         {
             if (pc.Data == null)
-                continue;
+                yield return null;
 
             while (string.IsNullOrEmpty(pc.Data.PlayerName))
                 yield return null;
